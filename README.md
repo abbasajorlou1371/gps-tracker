@@ -59,3 +59,88 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+# GPS Tracker
+
+## Supervisor Setup
+
+The application uses Supervisor to manage the queue workers and Reverb WebSocket server. Follow these steps to set up Supervisor:
+
+1. Install Supervisor:
+```bash
+# On Ubuntu/Debian
+sudo apt-get install supervisor
+```
+
+2. Copy the supervisor configuration:
+```bash
+# Copy configuration file
+sudo cp supervisor/gps-tracker.conf /etc/supervisor/conf.d/
+```
+
+3. Create log directory with proper permissions:
+```bash
+# Create log directories
+sudo mkdir -p /home/gps/public_html/storage/logs
+sudo chown -R gps:gps /home/gps/public_html/storage/logs
+sudo chmod -R 755 /home/gps/public_html/storage/logs
+```
+
+4. Update and start Supervisor:
+```bash
+# Reload supervisor configuration
+sudo supervisorctl reread
+sudo supervisorctl update
+
+# Start the processes
+sudo supervisorctl start gps-tracker:*
+```
+
+5. Check status:
+```bash
+sudo supervisorctl status
+```
+
+The configuration will start:
+- 8 queue worker processes for handling background jobs
+- 1 Reverb WebSocket server for real-time updates
+
+### Useful Supervisor Commands
+
+```bash
+# Start all processes
+sudo supervisorctl start all
+
+# Stop all processes
+sudo supervisorctl stop all
+
+# Restart all processes
+sudo supervisorctl restart all
+
+# Start specific group
+sudo supervisorctl start gps-tracker:*
+
+# View process status
+sudo supervisorctl status
+
+# Reload configuration
+sudo supervisorctl update
+```
+
+### Log Files
+- Queue worker logs: `/home/gps/public_html/storage/logs/worker.log`
+- Reverb server logs: `/home/gps/public_html/storage/logs/reverb.log`
+
+### Troubleshooting
+
+If you encounter any permission issues:
+1. Make sure the `gps` user exists and has proper permissions
+2. Ensure storage directory is writable:
+```bash
+sudo chown -R gps:gps /home/gps/public_html/storage
+sudo chmod -R 755 /home/gps/public_html/storage
+```
+3. Check supervisor logs:
+```bash
+sudo tail -f /var/log/supervisor/supervisord.log
+```
