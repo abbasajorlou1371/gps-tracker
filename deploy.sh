@@ -19,6 +19,13 @@ echo "🎨 Installing/updating NPM packages and building assets..."
 npm install
 npm run build
 
+# Check if .env file exists, if not create it from .env.example
+echo "📝 Checking for .env file..."
+if [ ! -f .env ]; then
+    echo "Creating .env file from .env.example..."
+    cp .env.example .env
+fi
+
 # Check if APP_KEY is empty and generate if needed
 echo "🔑 Checking application key..."
 if grep -q "^APP_KEY=$" .env || ! grep -q "^APP_KEY=" .env; then
