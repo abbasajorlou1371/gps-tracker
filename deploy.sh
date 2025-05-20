@@ -33,13 +33,6 @@ if grep -q "^APP_KEY=$" .env || ! grep -q "^APP_KEY=" .env; then
     php artisan key:generate
 fi
 
-# Clear all Laravel caches
-echo "🧹 Clearing Laravel caches..."
-php artisan cache:clear
-php artisan config:clear
-php artisan route:clear
-php artisan view:clear
-
 # Check SQLite database existence
 echo "🔍 Checking SQLite database..."
 DB_PATH=$(php artisan tinker --execute="echo config('database.connections.sqlite.database');" | grep -v ">>>" | grep -v "===" | tr -d '\n')
@@ -54,16 +47,16 @@ fi
 echo "🔄 Running database migrations..."
 php artisan migrate --force
 
+# Clear all Laravel caches
+echo "🧹 Clearing Laravel caches..."
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+
+
 # Optimize Laravel
 echo "⚡ Optimizing Laravel..."
 php artisan optimize
-
-# Restart queue workers
-echo "🔄 Restarting queue workers..."
-php artisan queue:restart
-
-# Restart Laravel Reverb server
-echo "🔄 Restarting Reverb server..."
-supervisorctl restart reverb-server
 
 echo "✅ Deployment completed successfully!"
