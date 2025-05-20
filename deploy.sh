@@ -40,6 +40,16 @@ php artisan config:clear
 php artisan route:clear
 php artisan view:clear
 
+# Check SQLite database existence
+echo "🔍 Checking SQLite database..."
+DB_PATH=$(php artisan tinker --execute="echo config('database.connections.sqlite.database');" | grep -v ">>>" | grep -v "===" | tr -d '\n')
+
+if [ ! -f "$DB_PATH" ]; then
+    echo "❌ Error: SQLite database not found at: $DB_PATH"
+    echo "Please create the database file manually before running migrations."
+    exit 1
+fi
+
 # Run database migrations
 echo "🔄 Running database migrations..."
 php artisan migrate --force
